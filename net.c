@@ -57,7 +57,7 @@ static int slashnet_open(struct inode *inode, struct file *filp)
 static ssize_t slashnet_read_file(struct file *filp, char *dnsquery,
 		size_t count, loff_t *offset)
 {
-	char *buffer = (char *)(filp->d_entry->d_inode->i_private);
+	char *buffer = (char *)(filp->f_inode->i_private);
 	int len, retval;
 	len = strlen(buffer);
 	if (*offset > len)
@@ -89,7 +89,7 @@ static ssize_t slashnet_write_file(struct file *filp, const char *dnsquery,
 		size_t count, loff_t *offset)
 {
 	char tmp[TMPSIZE];
-	char *buffer = (char *)(filp->d_dentry->d_inode->i_private);
+	char *buffer = (char *)(filp->f_inode->i_private);
 
 	if (*offset != 0)
 		return -EINVAL;
