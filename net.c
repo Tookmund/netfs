@@ -136,7 +136,7 @@ struct dentry *slashnet_create_file (struct super_block *sb,
  */
 	qname.name = name;
 	qname.len = strlen (name);
-	qname.hash = full_name_hash(name, qname.len);
+	qname.hash = full_name_hash(NULL, name, qname.len);
 /*
  * Now we can create our dentry and the inode to go with it.
  */
@@ -180,7 +180,7 @@ struct dentry *slashnet_create_dir (struct super_block *sb,
 
 	qname.name = name;
 	qname.len = strlen (name);
-	qname.hash = full_name_hash(name, qname.len);
+	qname.hash = full_name_hash(NULL, name, qname.len);
 	dentry = d_alloc(parent, &qname);
 	if (! dentry)
 		goto out;
