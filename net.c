@@ -33,7 +33,6 @@ static struct inode *slashnet_make_inode(struct super_block *sb, int mode)
 		ret->i_blkbits = blksize_bits(PAGE_SIZE);
 		ret->i_blocks = 0;
 		ret->i_atime = ret->i_mtime = ret->i_ctime = current_time(ret);
-		ret->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
 	}
 	return ret;
 }
@@ -138,7 +137,10 @@ struct dentry *slashnet_create_file (struct super_block *sb,
 	if (! inode)
 		goto out_dput;
 	inode->i_fop = &slashnet_file_ops;
-	inode->i_private = initval;
+
+	inode->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
+	memset(inode->i_private, 0, TMPSIZE);
+	memcpy(inode->i_private, initval, strlen(initval));
 	/* debug */
 	printk("*** %s: initial val is %s ***\n", name, initval);
 
