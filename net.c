@@ -29,7 +29,7 @@ static struct inode *slashnet_make_inode(struct super_block *sb, int mode)
 	if (ret) {
 		ret->i_mode = mode;
 		ret->i_uid = ret->i_gid = 0;
-		ret->i_blkbits = blksize_bits(PAGE_CACHE_SIZE);
+		ret->i_blkbits = blksize_bits(PAGE_SIZE);
 		ret->i_blocks = 0;
 		ret->i_atime = ret->i_mtime = ret->i_ctime = CURRENT_TIME;
 	}
@@ -239,8 +239,8 @@ static int slashnet_fill_super (struct super_block *sb, void *data, int silent)
 /*
  * Basic parameters.
  */
-	sb->s_blocksize = PAGE_CACHE_SIZE;
-	sb->s_blocksize_bits = PAGE_CACHE_SHIFT;
+	sb->s_blocksize = PAGE_SIZE;
+	sb->s_blocksize_bits = PAGE_SHIFT;
 	sb->s_magic = NET_MAGIC;
 	sb->s_op = &slashnet_s_ops;
 /*
