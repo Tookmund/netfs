@@ -1,0 +1,12 @@
+# Linux netfs
+
+Simple Plan9-inspired network connection filesystem.
+
+Built on the initial experiments of [glendix](https://github.com/anantn/glendix),
+which itself built on [lwnfs](https://lwn.net/Articles/13325/).
+
+## TODO
+- [ ] counter in tcp i_private for folder names
+- [ ] Correctly deallocate i_private
+- [ ] Wire up data and ctl
+- [ ] udp?
