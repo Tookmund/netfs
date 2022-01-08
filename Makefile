@@ -1,13 +1,13 @@
-TARGET = plan9_net
+TARGET = netfs
 OBJS = net.o cs.o tcp.o ether.o
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 
-obj-m += $(TARGET).o 
+obj-m += $(TARGET).o
 $(TARGET)-objs := $(OBJS)
 
-all: 
+all:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
 
 clean:
