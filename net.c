@@ -48,7 +48,6 @@ static struct inode *slashnet_make_inode(struct super_block *sb, int mode)
 static int slashnet_open(struct inode *inode, struct file *filp)
 {
 	inode->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
-	filp->private_data = inode->i_private;
 	return 0;
 }
 
@@ -58,18 +57,19 @@ static int slashnet_open(struct inode *inode, struct file *filp)
 static ssize_t slashnet_read_file(struct file *filp, char *dnsquery,
 		size_t count, loff_t *offset)
 {
+	char *buffer = (char *)(filp->d_entry->d_inode->i_private);
 	int len, retval;
 	len = strlen(buffer);
 	if (*offset > len)
 		return 0;
 	if (count > len - *offset)
 		count = len - *offset;
-	
+
 	retval = copy_to_user(dnsquery, buffer + *offset, count);
 
 	if (retval)
 		return -EFAULT;
-	
+
 	/* debug */
 	/*
 	printk("*** value buffer has in read_file: %s ***\n", buffer);
@@ -89,11 +89,11 @@ static ssize_t slashnet_write_file(struct file *filp, const char *dnsquery,
 		size_t count, loff_t *offset)
 {
 	char tmp[TMPSIZE];
-	buffer = (char *)(filp->private_data);
-	
+	char *buffer = (char *)(filp->d_dentry->d_inode->i_private);
+
 	if (*offset != 0)
 		return -EINVAL;
-	
+
 	memset(tmp, 0, TMPSIZE);
 	if(copy_from_user(tmp, dnsquery, count))
 		return -EFAULT;
@@ -101,13 +101,6 @@ static ssize_t slashnet_write_file(struct file *filp, const char *dnsquery,
 	memcpy (buffer, tmp, count);
 	/* debug */
 	printk("*** value buffer has in write_file: %s ***\n", (char *) filp->private_data);
-	
-/* 
- * Although private_data has required info here, it doesnot retain 
- * its value by the time we reach slashnet_read_file. Hence we are 
- * currently using a static global variable, buffer. 
- */
-	
 	return count;
 }
 
