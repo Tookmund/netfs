@@ -1,16 +1,16 @@
 /*
  * Copyright 2009 Rahul Murmuria <rahul@murmuria.in>
  * This file may be redistributed under the terms of the GNU GPL.
- * Most of this program has been adapted from the design of lwnfs 
+ * Most of this program has been adapted from the design of lwnfs
  * from http://lwn.net which is a sample implementation over libfs.
  */
 
 #include "net.h"
 
 MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Jacob Adams <jacob@tookmund.com>");
 MODULE_AUTHOR("Rahul Murmuria <rahul@murmuria.in>");
-
-static char *buffer;
+MODULE_AUTHOR("Jonathan Corbet <corbet@lwn.net>");
 
 inline unsigned int blksize_bits(unsigned int size)
 {
