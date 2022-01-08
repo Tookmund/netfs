@@ -45,7 +45,7 @@ static struct inode *netfs_make_inode(struct super_block *sb, int mode)
 /*
  * Open a file.
  */
-static int netfs_open(struct inode *inode, struct file *filp)
+int netfs_open(struct inode *inode, struct file *filp)
 {
 	return 0;
 }

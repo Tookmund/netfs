@@ -7,6 +7,7 @@
 #include <linux/slab.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/mount.h>
 #include <linux/string.h>
 #include <linux/pagemap.h>
 
@@ -20,7 +21,12 @@
  * Create a file.
  */
 struct dentry *netfs_create_file (struct super_block *,
-		struct dentry *, const char *);
+		struct dentry *, const char *, struct file_operations *);
+
+/*
+ * Open a file
+ */
+int netfs_open(struct inode *inode, struct file *filp);
 
 /*
  * Create a directory
