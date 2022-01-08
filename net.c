@@ -33,6 +33,7 @@ static struct inode *slashnet_make_inode(struct super_block *sb, int mode)
 		ret->i_blkbits = blksize_bits(PAGE_SIZE);
 		ret->i_blocks = 0;
 		ret->i_atime = ret->i_mtime = ret->i_ctime = current_time(ret);
+		ret->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
 	}
 	return ret;
 }
@@ -47,7 +48,6 @@ static struct inode *slashnet_make_inode(struct super_block *sb, int mode)
  */
 static int slashnet_open(struct inode *inode, struct file *filp)
 {
-	inode->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
 	return 0;
 }
 
