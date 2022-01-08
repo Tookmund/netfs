@@ -108,7 +108,7 @@ static struct file_operations netfs_file_ops = {
  * Create a file.
  */
 struct dentry *netfs_create_file (struct super_block *sb,
-		struct dentry *dir, const char *name)
+		struct dentry *dir, const char *name, struct file_operations *fops)
 {
 	struct dentry *dentry;
 	struct inode *inode;
@@ -127,11 +127,15 @@ struct dentry *netfs_create_file (struct super_block *sb,
 	inode = netfs_make_inode(sb, S_IFREG | 0644);
 	if (! inode)
 		goto out_dput;
-	inode->i_fop = &netfs_file_ops;
+	if (!fops)
+	{
+		inode->i_fop = &netfs_file_ops;
+		inode->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
+		memset(inode->i_private, 0, TMPSIZE);
+		memcpy(inode->i_private, qname.name, qname.len);
+	}
+	else inode->i_fop = fops;
 
-	inode->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
-	memset(inode->i_private, 0, TMPSIZE);
-	memcpy(inode->i_private, qname.name, qname.len);
 
 /*
  * Put it all into the dentry cache and we're done.
