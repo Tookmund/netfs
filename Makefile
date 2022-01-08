@@ -1,5 +1,5 @@
 TARGET = netfs
-OBJS = net.o cs.o tcp.o ether.o
+OBJS = net.o tcp.o
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)

@@ -31,7 +31,5 @@ struct dentry *slashnet_create_dir (struct super_block *,
 /*
  * Create the files that we export.
  */
-void cs_create_files (struct super_block *, struct dentry *);
 void tcp_create_files (struct super_block *, struct dentry *);
-void ether_create_files (struct super_block *, struct dentry *);
 
