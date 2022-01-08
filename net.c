@@ -278,17 +278,16 @@ static int slashnet_fill_super (struct super_block *sb, void *data, int silent)
 /*
  * Stuff to pass in when registering the filesystem.
  */
-static int slashnet_get_super(struct file_system_type *fst, 
-		int flags, const char *devname, void *data, 
-		struct vfsmount *mnt)
+static struct dentry *slashnet_get_super(struct file_system_type *fst,
+		int flags, const char *devname, void *data)
 {
-	return get_sb_single(fst, flags, data, slashnet_fill_super, mnt);
+	return mount_single(fst, flags, data, slashnet_fill_super);
 }
 
 static struct file_system_type slashnet_type = {
 	.owner 		= THIS_MODULE,
 	.name		= "net",
-	.get_sb		= slashnet_get_super,
+	.mount		= slashnet_get_super,
 	.kill_sb	= kill_litter_super,
 };
 
