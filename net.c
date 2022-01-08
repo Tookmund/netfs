@@ -69,14 +69,6 @@ static ssize_t slashnet_read_file(struct file *filp, char *dnsquery,
 	if (retval)
 		return -EFAULT;
 
-	/* debug */
-	/*
-	printk("*** value buffer has in read_file: %s ***\n", buffer);
-	printk("*** value of retval in copy_to_user: %d ***\n", retval);
-	printk("*** value of offset in read_file: %d ***\n", (int) *offset);
-	printk("*** value of count in read_file: %d ***\n", count);
-	printk("*** value of len in read_file: %d ***\n", len);
-	*/
 	*offset += count;
 	return count;
 }
@@ -98,8 +90,6 @@ static ssize_t slashnet_write_file(struct file *filp, const char *dnsquery,
 		return -EFAULT;
 	tmp[count-1] = '\0';
 	memcpy (buffer, tmp, count);
-	/* debug */
-	printk("*** value buffer has in write_file: %s ***\n", (char *) filp->private_data);
 	return count;
 }
 
@@ -142,8 +132,6 @@ struct dentry *slashnet_create_file (struct super_block *sb,
 	inode->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
 	memset(inode->i_private, 0, TMPSIZE);
 	memcpy(inode->i_private, qname.name, qname.len);
-	/* debug */
-	printk("*** %s: initial val is %s ***\n", name, qname.name);
 
 /*
  * Put it all into the dentry cache and we're done.
