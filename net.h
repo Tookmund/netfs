@@ -20,7 +20,7 @@
  * Create a file.
  */
 struct dentry *slashnet_create_file (struct super_block *,
-		struct dentry *, const char *, char *);
+		struct dentry *, const char *);
 
 /*
  * Create a directory

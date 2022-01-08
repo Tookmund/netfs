@@ -118,13 +118,14 @@ static struct file_operations slashnet_file_ops = {
  * Create a file.
  */
 struct dentry *slashnet_create_file (struct super_block *sb,
-		struct dentry *dir, const char *name, char *initval)
+		struct dentry *dir, const char *name)
 {
 	struct dentry *dentry;
 	struct inode *inode;
 	struct qstr qname = QSTR_INIT(name, strlen(name));
 /*
  * Make a hashed version of the name to go with the dentry.
+ * Must include the salt of the parent directory dentry to work correctly
  */
 	qname.hash = full_name_hash(dir, qname.name, qname.len);
 /*
@@ -140,9 +141,9 @@ struct dentry *slashnet_create_file (struct super_block *sb,
 
 	inode->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
 	memset(inode->i_private, 0, TMPSIZE);
-	memcpy(inode->i_private, initval, strlen(initval));
+	memcpy(inode->i_private, qname.name, qname.len);
 	/* debug */
-	printk("*** %s: initial val is %s ***\n", name, initval);
+	printk("*** %s: initial val is %s ***\n", name, qname.name);
 
 /*
  * Put it all into the dentry cache and we're done.

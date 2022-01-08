@@ -12,20 +12,11 @@
 
 void tcp_create_files (struct super_block *sb, struct dentry *root)
 {
- 	static char *clone_tmp, *stats_tmp;
 	struct dentry *subdir;
-	
 	subdir = slashnet_create_dir(sb, root, "tcp");
 	if (subdir) {
-		clone_tmp = kmalloc(TMPSIZE, GFP_KERNEL);
-		memset (clone_tmp, 0, TMPSIZE);
-		slashnet_create_file(sb, subdir, "clone", clone_tmp);
-		kfree(clone_tmp);
-
-		stats_tmp = kmalloc(TMPSIZE, GFP_KERNEL);
-		memset (stats_tmp, 0, TMPSIZE);
-		slashnet_create_file(sb, subdir, "stats", stats_tmp);
-		kfree(stats_tmp);
+		slashnet_create_file(sb, subdir, "clone");
+		slashnet_create_file(sb, subdir, "stats");
 	}
 }
 
