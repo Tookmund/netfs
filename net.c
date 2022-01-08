@@ -32,7 +32,7 @@ static struct inode *slashnet_make_inode(struct super_block *sb, int mode)
 		ret->i_gid = KGIDT_INIT(0);
 		ret->i_blkbits = blksize_bits(PAGE_SIZE);
 		ret->i_blocks = 0;
-		ret->i_atime = ret->i_mtime = ret->i_ctime = CURRENT_TIME;
+		ret->i_atime = ret->i_mtime = ret->i_ctime = current_time(ret);
 	}
 	return ret;
 }
