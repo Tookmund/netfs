@@ -19,13 +19,13 @@
 /*
  * Create a file.
  */
-struct dentry *slashnet_create_file (struct super_block *,
+struct dentry *netfs_create_file (struct super_block *,
 		struct dentry *, const char *);
 
 /*
  * Create a directory
  */
-struct dentry *slashnet_create_dir (struct super_block *,
+struct dentry *netfs_create_dir (struct super_block *,
 		struct dentry *, const char *);
 
 /*

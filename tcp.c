@@ -13,10 +13,10 @@
 void tcp_create_files (struct super_block *sb, struct dentry *root)
 {
 	struct dentry *subdir;
-	subdir = slashnet_create_dir(sb, root, "tcp");
+	subdir = netfs_create_dir(sb, root, "tcp");
 	if (subdir) {
-		slashnet_create_file(sb, subdir, "clone");
-		slashnet_create_file(sb, subdir, "stats");
+		netfs_create_file(sb, subdir, "clone");
+		netfs_create_file(sb, subdir, "stats");
 	}
 }
 

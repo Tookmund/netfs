@@ -22,7 +22,7 @@ inline unsigned int blksize_bits(unsigned int size)
     return bits;
 }
 
-static struct inode *slashnet_make_inode(struct super_block *sb, int mode)
+static struct inode *netfs_make_inode(struct super_block *sb, int mode)
 {
 	struct inode *ret = new_inode(sb);
 
@@ -45,7 +45,7 @@ static struct inode *slashnet_make_inode(struct super_block *sb, int mode)
 /*
  * Open a file.
  */
-static int slashnet_open(struct inode *inode, struct file *filp)
+static int netfs_open(struct inode *inode, struct file *filp)
 {
 	return 0;
 }
@@ -53,7 +53,7 @@ static int slashnet_open(struct inode *inode, struct file *filp)
 /*
  * Read a file.
  */
-static ssize_t slashnet_read_file(struct file *filp, char *dnsquery,
+static ssize_t netfs_read_file(struct file *filp, char *dnsquery,
 		size_t count, loff_t *offset)
 {
 	char *buffer = (char *)(filp->f_inode->i_private);
@@ -76,7 +76,7 @@ static ssize_t slashnet_read_file(struct file *filp, char *dnsquery,
 /*
  * Write a file.
  */
-static ssize_t slashnet_write_file(struct file *filp, const char *dnsquery,
+static ssize_t netfs_write_file(struct file *filp, const char *dnsquery,
 		size_t count, loff_t *offset)
 {
 	char tmp[TMPSIZE];
@@ -97,17 +97,17 @@ static ssize_t slashnet_write_file(struct file *filp, const char *dnsquery,
 /*
  * Now we can put together our file operations structure.
  */
-static struct file_operations slashnet_file_ops = {
-	.open	= slashnet_open,
-	.read 	= slashnet_read_file,
-	.write  = slashnet_write_file,
+static struct file_operations netfs_file_ops = {
+	.open	= netfs_open,
+	.read 	= netfs_read_file,
+	.write  = netfs_write_file,
 };
 
 
 /*
  * Create a file.
  */
-struct dentry *slashnet_create_file (struct super_block *sb,
+struct dentry *netfs_create_file (struct super_block *sb,
 		struct dentry *dir, const char *name)
 {
 	struct dentry *dentry;
@@ -124,10 +124,10 @@ struct dentry *slashnet_create_file (struct super_block *sb,
 	dentry = d_alloc(dir, &qname);
 	if (! dentry)
 		goto out;
-	inode = slashnet_make_inode(sb, S_IFREG | 0644);
+	inode = netfs_make_inode(sb, S_IFREG | 0644);
 	if (! inode)
 		goto out_dput;
-	inode->i_fop = &slashnet_file_ops;
+	inode->i_fop = &netfs_file_ops;
 
 	inode->i_private = kmalloc(TMPSIZE, GFP_KERNEL);
 	memset(inode->i_private, 0, TMPSIZE);
@@ -153,7 +153,7 @@ struct dentry *slashnet_create_file (struct super_block *sb,
  * almost identical to the "create file" logic, except that we create
  * the inode with a different mode, and use the libfs "simple" operations.
  */
-struct dentry *slashnet_create_dir (struct super_block *sb,
+struct dentry *netfs_create_dir (struct super_block *sb,
 		struct dentry *parent, const char *name)
 {
 	struct dentry *dentry;
@@ -164,7 +164,7 @@ struct dentry *slashnet_create_dir (struct super_block *sb,
 	if (! dentry)
 		goto out;
 
-	inode = slashnet_make_inode(sb, S_IFDIR | 0644);
+	inode = netfs_make_inode(sb, S_IFDIR | 0644);
 	if (! inode)
 		goto out_dput;
 	inode->i_op = &simple_dir_inode_operations;
@@ -185,7 +185,7 @@ struct dentry *slashnet_create_dir (struct super_block *sb,
  * Create the files that we export.
  */
 
-static void slashnet_create_files (struct super_block *sb, struct dentry *root)
+static void netfs_create_files (struct super_block *sb, struct dentry *root)
 {
 	tcp_create_files (sb, root);
 }
@@ -202,7 +202,7 @@ static void slashnet_create_files (struct super_block *sb, struct dentry *root)
  * Our superblock operations, both of which are generic kernel ops
  * that we don't have to write ourselves.
  */
-static struct super_operations slashnet_s_ops = {
+static struct super_operations netfs_s_ops = {
 	.statfs		= simple_statfs,
 	.drop_inode	= generic_delete_inode,
 };
@@ -210,7 +210,7 @@ static struct super_operations slashnet_s_ops = {
 /*
  * "Fill" a superblock with mundane stuff.
  */
-static int slashnet_fill_super (struct super_block *sb, void *data, int silent)
+static int netfs_fill_super (struct super_block *sb, void *data, int silent)
 {
 	struct inode *root;
 	struct dentry *root_dentry;
@@ -220,14 +220,14 @@ static int slashnet_fill_super (struct super_block *sb, void *data, int silent)
 	sb->s_blocksize = PAGE_SIZE;
 	sb->s_blocksize_bits = PAGE_SHIFT;
 	sb->s_magic = NET_MAGIC;
-	sb->s_op = &slashnet_s_ops;
+	sb->s_op = &netfs_s_ops;
 /*
  * We need to conjure up an inode to represent the root directory
  * of this filesystem.  Its operations all come from libfs, so we
  * don't have to mess with actually *doing* things inside this
  * directory.
  */
-	root = slashnet_make_inode (sb, S_IFDIR | 0755);
+	root = netfs_make_inode (sb, S_IFDIR | 0755);
 	if (! root)
 		goto out;
 	root->i_op = &simple_dir_inode_operations;
@@ -242,7 +242,7 @@ static int slashnet_fill_super (struct super_block *sb, void *data, int silent)
 /*
  * Make up the files which will be in this filesystem, and we're done.
  */
-	slashnet_create_files (sb, root_dentry);
+	netfs_create_files (sb, root_dentry);
 	return 0;
 	
   out_iput:
@@ -255,16 +255,16 @@ static int slashnet_fill_super (struct super_block *sb, void *data, int silent)
 /*
  * Stuff to pass in when registering the filesystem.
  */
-static struct dentry *slashnet_get_super(struct file_system_type *fst,
+static struct dentry *netfs_get_super(struct file_system_type *fst,
 		int flags, const char *devname, void *data)
 {
-	return mount_single(fst, flags, data, slashnet_fill_super);
+	return mount_single(fst, flags, data, netfs_fill_super);
 }
 
-static struct file_system_type slashnet_type = {
+static struct file_system_type netfs_type = {
 	.owner 		= THIS_MODULE,
-	.name		= "net",
-	.mount		= slashnet_get_super,
+	.name		= "netfs",
+	.mount		= netfs_get_super,
 	.kill_sb	= kill_litter_super,
 };
 
@@ -274,16 +274,16 @@ static struct file_system_type slashnet_type = {
 /*
  * Get things set up.
  */
-static int __init slashnet_init(void)
+static int __init netfs_init(void)
 {
-	return register_filesystem(&slashnet_type);
+	return register_filesystem(&netfs_type);
 }
 
-static void __exit slashnet_exit(void)
+static void __exit netfs_exit(void)
 {
-	unregister_filesystem(&slashnet_type);
+	unregister_filesystem(&netfs_type);
 }
 
-module_init(slashnet_init);
-module_exit(slashnet_exit);
+module_init(netfs_init);
+module_exit(netfs_exit);
 
